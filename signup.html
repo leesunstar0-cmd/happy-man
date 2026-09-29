@@ -254,13 +254,16 @@ $("loginForm").addEventListener("submit", async (e) => {
   renderSignedIn(data.user);
 });
 
-function renderSignedIn(user) {
+async function renderSignedIn(user) {
   const nick = user.user_metadata && user.user_metadata.nickname;
   $("pageTitle").textContent = "환영해요";
   $("pageLead").textContent = "행복을 주는 남자의 회원이 되었어요.";
   $("signedInName").textContent = (nick || "회원") + "님, 로그인했어요";
   $("signedInEmail").textContent = user.email;
   showOnly($("signedIn"));
+  const { data } = await auth.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  const isAdmin = data && data.role === "admin";
+  $("signedInEmail").textContent = user.email + " · " + (isAdmin ? "관리자" : "일반 회원");
 }
 $("signOut").addEventListener("click", async () => { if (auth) await auth.auth.signOut(); setMode("login"); });
 

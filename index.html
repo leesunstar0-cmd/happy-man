@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
 <style>
-/* Layout: 한 줄기 세로 흐름. 웃는 해님 → 소개 → 행복 레시피 → 행복 충전소 → 연락처 */
+/* Layout: 상단 고정 바(회원 메뉴) → 웃는 해님 → [관리자 전용 사진] → 소개 → 레시피 → 충전소 → 연락처 → [관리자 회원 관리] */
 :root {
   --bg: #f3f7fb;
   --surface: #ffffff;
@@ -48,15 +48,25 @@ h2 { font-size: 1.75rem; }
 p { margin: 0; }
 .label { font-size: .8rem; letter-spacing: .12em; color: var(--sky); text-transform: uppercase; font-weight: 700; }
 section { display: flex; flex-direction: column; gap: 16px; }
+button { font: inherit; font-family: var(--font-display); border: 0; border-radius: 99px; cursor: pointer; transition: transform .15s ease; }
+button:hover { transform: translateY(-2px); }
+button:active { transform: scale(.97); }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
 
-/* Member menu */
-.member { max-width: 720px; margin: 0 auto; padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; font-size: .92rem; }
-.member a, .member button { font: inherit; color: var(--fg); text-decoration: none; padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); }
-.member a.join { background: var(--sky); border-color: var(--sky); color: #fff; }
-.member a:focus-visible, .member button:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
-.member span { color: var(--muted); }
+/* Top bar */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; margin-inline: -16px; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-size: 1.15rem; color: var(--fg); text-decoration: none; }
+.brand b { color: var(--sky); font-weight: 400; }
+.account { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .92rem; }
+.account a, .account .ghost { font-family: var(--font-body); font-size: .92rem; text-decoration: none; padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.account a.join { background: var(--sky); border-color: var(--sky); color: #fff; font-weight: 700; }
+.who { display: inline-flex; align-items: center; gap: 6px; }
+.badge { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--bg); color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+.badge.admin { background: var(--sun); color: var(--ink); border-color: var(--sun); }
 
-/* Hero */.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding-top: 32px; }
+/* Hero */
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding-top: 40px; }
 .sun { width: 150px; height: 150px; border-radius: 50%; background: var(--sun); display: grid; place-items: center; position: relative; animation: bob 4s ease-in-out infinite; }
 .sun::before { content: ""; position: absolute; inset: -18px; border-radius: 50%;
   background: repeating-conic-gradient(var(--sun) 0 6deg, transparent 6deg 30deg);
@@ -66,19 +76,22 @@ section { display: flex; flex-direction: column; gap: 16px; }
 .hero h1 { font-size: clamp(2.2rem, 7vw, 3.4rem); }
 .hero h1 em { font-style: normal; color: var(--sky); }
 .hero p { color: var(--muted); max-width: 32ch; }
+.hero .cta { display: inline-block; margin-top: 4px; font-family: var(--font-display); font-size: 1.1rem; padding: 10px 24px; border-radius: 99px; background: var(--sky); color: #fff; text-decoration: none; }
 @keyframes bob { 50% { transform: translateY(-6px); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Prayer */
+/* Admin-only prayer */
 .prayer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
-.prayer figure { margin: 0; border-radius: 200px 200px 20px 20px; overflow: hidden; border: 6px solid var(--sun); aspect-ratio: 4 / 5; max-width: 100%; }
+.prayer figure { margin: 0; border-radius: 200px 200px 20px 20px; overflow: hidden; border: 6px solid var(--sun); aspect-ratio: 4 / 5; max-width: 100%; background: var(--surface); display: grid; place-items: center; }
 .prayer figure img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
 .prayer .text { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .prayer blockquote { margin: 0; padding: 16px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; font-size: 1.1rem; }
 .prayer blockquote p { margin: 0; }
 .prayer blockquote span { display: block; margin-top: 6px; font-size: .88rem; color: var(--muted); }
+.prayer .placeholder { padding: 24px; text-align: center; color: var(--muted); font-size: .92rem; }
 
-/* About */.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+/* About */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
 .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; text-align: center; }
 .stat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; color: var(--sky); font-variant-numeric: tabular-nums; }
 .stat span { font-size: .85rem; color: var(--muted); }
@@ -97,46 +110,51 @@ section { display: flex; flex-direction: column; gap: 16px; }
 .meter { width: 100%; max-width: 360px; height: 14px; background: rgba(42, 33, 7, .15); border-radius: 99px; overflow: hidden; }
 .meter i { display: block; height: 100%; width: 20%; background: var(--ink); border-radius: 99px; transition: width .5s ease; }
 .meter-text { font-size: .9rem; font-variant-numeric: tabular-nums; }
-button { font: inherit; font-family: var(--font-display); border: 0; border-radius: 99px; cursor: pointer; transition: transform .15s ease; }
-button:hover { transform: translateY(-2px); }
-button:active { transform: scale(.97); }
-button:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
 .charge button { font-size: 1.15rem; background: var(--ink); color: #ffe9a8; padding: 12px 28px; }
 
-/* Admin */
-.admin { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding-top: 16px; border-top: 1px dashed var(--line); }
-.admin-status { font-size: .85rem; color: var(--muted); }
-.admin-toggle { background: transparent; color: var(--muted); font-family: var(--font-body); font-size: .85rem; text-decoration: underline; padding: 4px 8px; }
-.admin form { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
-.admin label { font-size: .9rem; }
-.admin input { font: inherit; font-size: .95rem; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--fg); width: 14rem; max-width: 100%; }
-.admin input:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
-.admin form button, .admin .logout { background: var(--sky); color: #fff; padding: 8px 18px; font-size: .95rem; }
-.admin form button[disabled] { opacity: .6; cursor: wait; }
-.admin-msg { font-size: .85rem; color: var(--muted); min-height: 1.4em; }
-.admin-msg.err { color: var(--danger); }
-
-/* Contact */.contact .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+/* Contact */
+.contact .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .contact code { font-family: var(--font-body); background: var(--surface); border: 1px solid var(--line); padding: 6px 12px; border-radius: 8px; user-select: all; }
 .contact button { font-size: .95rem; padding: 8px 18px; background: var(--sky); color: #fff; }
+
+/* Admin: member management */
+.admin-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px; }
+.admin-panel .note { color: var(--muted); font-size: .92rem; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 520px; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { color: var(--muted); font-weight: 700; font-size: .82rem; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .role-btn { font-family: var(--font-body); font-size: .82rem; padding: 4px 12px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); white-space: nowrap; }
+td .role-btn[disabled] { opacity: .5; cursor: not-allowed; transform: none; }
+.admin-msg { font-size: .88rem; color: var(--muted); min-height: 1.4em; }
+.admin-msg.err { color: var(--danger); }
 footer { text-align: center; color: var(--muted); font-size: .85rem; }
 
 @media (max-width: 480px) {
   .stats { grid-template-columns: 1fr; }
   .recipe li { grid-template-columns: 1fr; gap: 2px; }
   .prayer { grid-template-columns: 1fr; gap: 20px; }
+  .brand { font-size: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) { .sun, .sun::before { animation: none; } button, .meter i { transition: none; } }
 </style>
 </head>
 <body>
-<nav class="member" aria-label="회원 메뉴">
-  <span id="memberHello" hidden></span>
-  <a href="signup.html#login" id="navLogin">로그인</a>
-  <a href="signup.html" class="join" id="navJoin">회원가입</a>
-  <button type="button" id="navLogout" hidden>로그아웃</button>
-</nav>
-<div class="wrap">  <header class="hero">
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">행복을 주는 <b>남자</b></a>
+    <nav class="account" aria-label="회원 메뉴">
+      <a href="signup.html#login" id="navLogin">로그인</a>
+      <a href="signup.html" class="join" id="navJoin">회원가입</a>
+      <span class="who" id="navWho" hidden><span id="navName"></span><span class="badge" id="navBadge"></span></span>
+      <button type="button" class="ghost" id="navLogout" hidden>로그아웃</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap" id="top">
+  <section class="hero">
     <div class="sun" aria-hidden="true">
       <svg class="face" viewBox="0 0 84 84" fill="none">
         <circle cx="28" cy="34" r="5" fill="#2a2107"/>
@@ -149,21 +167,21 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
     <span class="label">Hello, nice to meet you</span>
     <h1>곁에 있으면 <em>행복해지는</em> 남자</h1>
     <p>작은 농담 하나, 따뜻한 커피 한 잔으로 하루를 조금 더 밝게 만드는 사람입니다.</p>
-  </header>
+    <a class="cta" href="signup.html" id="heroJoin">회원가입하고 행복 받기</a>
+  </section>
 
-  <section class="prayer" id="prayer" hidden>
-    <figure>
-      <img id="prayerImg" alt="">
-    </figure>
+  <section class="prayer" id="prayer" hidden aria-live="polite">
+    <figure id="prayerFigure"><p class="placeholder">사진을 불러오는 중이에요…</p></figure>
     <div class="text">
       <span class="label">Admin only</span>
-      <h2 id="prayerTitle"></h2>
+      <h2 id="prayerTitle">관리자 전용 콘텐츠</h2>
       <p id="prayerBody"></p>
-      <blockquote><p id="prayerQuote"></p><span id="prayerCite"></span></blockquote>
+      <blockquote id="prayerQuoteBox" hidden><p id="prayerQuote"></p><span id="prayerCite"></span></blockquote>
     </div>
   </section>
 
-  <section class="about">    <span class="label">About</span>
+  <section class="about">
+    <span class="label">About</span>
     <h2>이런 사람이에요</h2>
     <p>사람들의 이야기를 끝까지 들어주는 걸 좋아하고, 좋은 일이 생기면 제 일처럼 기뻐합니다. 힘든 날엔 말없이 옆에 앉아 있어 주고, 기분 좋은 날엔 누구보다 크게 웃습니다. 목표는 단 하나, 오늘 만난 사람이 조금 더 웃으며 집에 돌아가는 것.</p>
     <div class="stats">
@@ -203,15 +221,16 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
     </div>
   </section>
 
-  <section class="admin" aria-label="관리자">
-    <p class="admin-status" id="adminStatus">일반 회원으로 보고 있어요.</p>
-    <button type="button" class="admin-toggle" id="adminToggle" aria-expanded="false" aria-controls="adminForm">관리자 로그인</button>
-    <form id="adminForm" hidden>
-      <label for="adminPw">관리자 비밀번호</label>
-      <input type="password" id="adminPw" autocomplete="current-password" required>
-      <button type="submit" id="adminSubmit">로그인</button>
-    </form>
-    <button type="button" class="logout" id="adminLogout" hidden>로그아웃</button>
+  <section class="admin-panel" id="adminPanel" hidden>
+    <span class="label">Admin</span>
+    <h2>회원 관리</h2>
+    <p class="note">관리자만 볼 수 있어요. 회원 등급을 바꾸면 바로 적용돼요. 내 등급은 여기서 바꿀 수 없어요.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>닉네임</th><th>이메일</th><th>가입일</th><th>등급</th><th>등급 변경</th></tr></thead>
+        <tbody id="memberRows"></tbody>
+      </table>
+    </div>
     <p class="admin-msg" id="adminMsg" aria-live="polite"></p>
   </section>
 
@@ -248,82 +267,116 @@ document.getElementById("copyBtn").addEventListener("click", (e) => {
   const fallback = () => { const r = document.createRange(); r.selectNodeContents(email); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Ctrl+C로 복사하세요"; };
   try { navigator.clipboard.writeText(email.textContent).then(done, fallback); } catch { fallback(); }
 });
-// 관리자 전용: 사진과 글은 관리자 비밀번호로 암호화된 파일에만 들어 있어요.
-const ADMIN_FILE = "서윤/prayer.enc.json";
-const fromB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
-async function unlockPrayer(password) {
-  if (!window.crypto || !crypto.subtle) throw new Error("insecure");
-  let res;
-  try { res = await fetch(encodeURI(ADMIN_FILE), { cache: "no-store" }); } catch { throw new Error("offline"); }
-  if (!res.ok) throw new Error("missing");
-  const box = await res.json();
-  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
-  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: fromB64(box.salt), iterations: box.iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-  let plain;
-  try { plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromB64(box.iv) }, key, fromB64(box.data)); } catch { throw new Error("wrong"); }
-  return JSON.parse(new TextDecoder().decode(plain));
-}
-(() => {
-  const toggle = document.getElementById("adminToggle"), form = document.getElementById("adminForm"), pw = document.getElementById("adminPw");
-  const submit = document.getElementById("adminSubmit"), logout = document.getElementById("adminLogout");
-  const status = document.getElementById("adminStatus"), msg = document.getElementById("adminMsg");
-  const prayer = document.getElementById("prayer"), img = document.getElementById("prayerImg");
-  let blobUrl = null;
-  const say = (text, isError) => { msg.textContent = text; msg.classList.toggle("err", !!isError); };
-  toggle.addEventListener("click", () => {
-    form.hidden = !form.hidden;
-    toggle.setAttribute("aria-expanded", String(!form.hidden));
-    if (!form.hidden) pw.focus();
-  });
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    submit.disabled = true; say("확인하는 중이에요…");
-    try {
-      const data = await unlockPrayer(pw.value);
-      blobUrl = URL.createObjectURL(new Blob([fromB64(data.image)], { type: data.mime }));
-      img.src = blobUrl; img.alt = data.alt;
-      document.getElementById("prayerTitle").textContent = data.heading;
-      document.getElementById("prayerBody").textContent = data.body;
-      document.getElementById("prayerQuote").textContent = data.quote;
-      document.getElementById("prayerCite").textContent = data.cite;
-      prayer.hidden = false;
-      form.hidden = true; toggle.hidden = true; logout.hidden = false;
-      toggle.setAttribute("aria-expanded", "false");
-      status.textContent = "관리자로 보고 있어요. 관리자 전용 사진이 첫 화면 아래에 나와요.";
-      say("");
-      prayer.scrollIntoView({ behavior: "smooth", block: "center" });
-    } catch (err) {
-      const reason = err.message;
-      say(reason === "wrong" ? "비밀번호가 맞지 않아요. 다시 입력해 주세요."
-        : reason === "missing" ? "관리자 전용 사진 파일이 아직 올라와 있지 않아요."
-        : reason === "insecure" ? "이 주소에서는 잠금을 풀 수 없어요. https 주소로 열어 주세요."
-        : "사진 파일을 불러오지 못했어요. 파일을 더블클릭해 열었다면 웹 주소로 열어 주세요.", true);
-    } finally {
-      pw.value = ""; submit.disabled = false;
-    }
-  });
-  logout.addEventListener("click", () => {
-    prayer.hidden = true;
-    img.removeAttribute("src"); img.alt = "";
-    if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
-    logout.hidden = true; toggle.hidden = false;
-    status.textContent = "일반 회원으로 보고 있어요.";
-    say("로그아웃했어요.");
-  });
-})();
-// 회원 메뉴: 회원 서버가 연결되어 있으면 로그인 상태를 보여줘요.
+
+// 회원 등급: 비회원 / 일반 회원(member) / 관리자(admin)
+// 등급은 Supabase profiles 표에 저장되고, 관리자 전용 사진과 회원 목록은
+// 서버 규칙(RLS)으로 관리자에게만 내려와요. 화면에서 숨기는 것만으로 보호하지 않아요.
 (() => {
   const auth = window.happyAuth;
-  if (!auth) return;
-  const hello = document.getElementById("memberHello"), login = document.getElementById("navLogin"), join = document.getElementById("navJoin"), logout = document.getElementById("navLogout");
-  const render = (session) => {
-    const on = !!session;
-    hello.hidden = !on; logout.hidden = !on; login.hidden = on; join.hidden = on;
-    if (on) hello.textContent = ((session.user.user_metadata && session.user.user_metadata.nickname) || "회원") + "님 반가워요";
-  };
-  auth.auth.getSession().then(({ data }) => render(data.session));
-  auth.auth.onAuthStateChange((_event, session) => render(session));
-  logout.addEventListener("click", () => auth.auth.signOut());
-})();</script>
+  const $ = (id) => document.getElementById(id);
+  const ROLE_LABEL = { admin: "관리자", member: "일반 회원" };
+  let prayerUrl = null, currentUserId = null;
+
+  function renderGuest() {
+    currentUserId = null;
+    $("navLogin").hidden = false; $("navJoin").hidden = false; $("heroJoin").hidden = false;
+    $("navWho").hidden = true; $("navLogout").hidden = true;
+    hideAdmin();
+  }
+  function renderMember(profile, user) {
+    currentUserId = user.id;
+    const role = profile && profile.role === "admin" ? "admin" : "member";
+    $("navLogin").hidden = true; $("navJoin").hidden = true; $("heroJoin").hidden = true;
+    $("navWho").hidden = false; $("navLogout").hidden = false;
+    $("navName").textContent = ((profile && profile.nickname) || (user.user_metadata && user.user_metadata.nickname) || "회원") + "님";
+    $("navBadge").textContent = ROLE_LABEL[role];
+    $("navBadge").classList.toggle("admin", role === "admin");
+    if (role === "admin") showAdmin(); else hideAdmin();
+  }
+  function hideAdmin() {
+    $("prayer").hidden = true; $("adminPanel").hidden = true;
+    $("memberRows").replaceChildren();
+    if (prayerUrl) { URL.revokeObjectURL(prayerUrl); prayerUrl = null; }
+    $("prayerFigure").innerHTML = '<p class="placeholder">사진을 불러오는 중이에요…</p>';
+  }
+
+  async function showAdmin() {
+    $("prayer").hidden = false; $("adminPanel").hidden = false;
+    loadPrayer();
+    loadMembers();
+  }
+  async function loadPrayer() {
+    const bucket = auth.storage.from("admin-only");
+    const [img, meta] = await Promise.all([bucket.download("prayer.jpg"), bucket.download("prayer.json")]);
+    if (img.error) {
+      $("prayerFigure").innerHTML = '<p class="placeholder">관리자 전용 사진이 아직 없어요. Supabase 저장소 admin-only 에 prayer.jpg 를 올려 주세요.</p>';
+    } else {
+      prayerUrl = URL.createObjectURL(img.data);
+      const el = document.createElement("img");
+      el.src = prayerUrl;
+      $("prayerFigure").replaceChildren(el);
+    }
+    if (!meta.error) {
+      try {
+        const m = JSON.parse(await meta.data.text());
+        const el = $("prayerFigure").querySelector("img");
+        if (el) el.alt = m.alt || "";
+        $("prayerTitle").textContent = m.heading || "관리자 전용 콘텐츠";
+        $("prayerBody").textContent = m.body || "";
+        $("prayerQuote").textContent = m.quote || "";
+        $("prayerCite").textContent = m.cite || "";
+        $("prayerQuoteBox").hidden = !m.quote;
+      } catch { /* 설명 파일이 없거나 형식이 달라도 사진은 보여줘요 */ }
+    }
+  }
+
+  function adminSay(text, isError) { $("adminMsg").textContent = text; $("adminMsg").classList.toggle("err", !!isError); }
+  async function loadMembers(note) {
+    adminSay(note || "회원 목록을 불러오는 중이에요…");
+    const { data, error } = await auth.from("profiles").select("id, nickname, email, role, created_at").order("created_at", { ascending: true });
+    if (error) return adminSay("회원 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.", true);
+    const rows = $("memberRows");
+    rows.replaceChildren();
+    data.forEach((p) => {
+      const tr = document.createElement("tr");
+      const cells = [p.nickname || "-", p.email || "-", new Date(p.created_at).toLocaleDateString("ko-KR")].map((t, i) => {
+        const td = document.createElement("td"); td.textContent = t; if (i === 2) td.className = "num"; return td;
+      });
+      const roleTd = document.createElement("td");
+      const badge = document.createElement("span");
+      badge.className = "badge" + (p.role === "admin" ? " admin" : "");
+      badge.textContent = ROLE_LABEL[p.role] || p.role;
+      roleTd.appendChild(badge);
+      const actTd = document.createElement("td");
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "role-btn";
+      const next = p.role === "admin" ? "member" : "admin";
+      b.textContent = next === "admin" ? "관리자로 지정" : "일반 회원으로";
+      if (p.id === currentUserId) { b.disabled = true; b.textContent = "나"; }
+      b.addEventListener("click", async () => {
+        b.disabled = true;
+        const { error: err } = await auth.from("profiles").update({ role: next }).eq("id", p.id);
+        if (err) { adminSay("등급을 바꾸지 못했어요. 관리자 권한을 확인해 주세요.", true); b.disabled = false; return; }
+        loadMembers((p.nickname || p.email) + "님을 " + ROLE_LABEL[next] + "(으)로 바꿨어요.");
+      });
+      actTd.appendChild(b);
+      tr.append(...cells, roleTd, actTd);
+      rows.appendChild(tr);
+    });
+    if (!note) adminSay("회원 " + data.length + "명");
+  }
+
+  async function refresh(session) {
+    if (!session) return renderGuest();
+    const { data } = await auth.from("profiles").select("nickname, role").eq("id", session.user.id).maybeSingle();
+    renderMember(data, session.user);
+  }
+
+  if (!auth) return renderGuest();
+  auth.auth.getSession().then(({ data }) => refresh(data.session));
+  auth.auth.onAuthStateChange((event, session) => { if (event !== "INITIAL_SESSION") refresh(session); });
+  $("navLogout").addEventListener("click", () => auth.auth.signOut());
+})();
+</script>
 </body>
 </html>
