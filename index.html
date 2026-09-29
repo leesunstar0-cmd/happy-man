@@ -49,8 +49,14 @@ p { margin: 0; }
 .label { font-size: .8rem; letter-spacing: .12em; color: var(--sky); text-transform: uppercase; font-weight: 700; }
 section { display: flex; flex-direction: column; gap: 16px; }
 
-/* Hero */
-.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding-top: 56px; }
+/* Member menu */
+.member { max-width: 720px; margin: 0 auto; padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; font-size: .92rem; }
+.member a, .member button { font: inherit; color: var(--fg); text-decoration: none; padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); }
+.member a.join { background: var(--sky); border-color: var(--sky); color: #fff; }
+.member a:focus-visible, .member button:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.member span { color: var(--muted); }
+
+/* Hero */.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding-top: 32px; }
 .sun { width: 150px; height: 150px; border-radius: 50%; background: var(--sun); display: grid; place-items: center; position: relative; animation: bob 4s ease-in-out infinite; }
 .sun::before { content: ""; position: absolute; inset: -18px; border-radius: 50%;
   background: repeating-conic-gradient(var(--sun) 0 6deg, transparent 6deg 30deg);
@@ -124,8 +130,13 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="hero">
+<nav class="member" aria-label="회원 메뉴">
+  <span id="memberHello" hidden></span>
+  <a href="signup.html#login" id="navLogin">로그인</a>
+  <a href="signup.html" class="join" id="navJoin">회원가입</a>
+  <button type="button" id="navLogout" hidden>로그아웃</button>
+</nav>
+<div class="wrap">  <header class="hero">
     <div class="sun" aria-hidden="true">
       <svg class="face" viewBox="0 0 84 84" fill="none">
         <circle cx="28" cy="34" r="5" fill="#2a2107"/>
@@ -207,6 +218,8 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
   <footer>오늘도 좋은 하루 보내세요 :)</footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
 <script>
 const messages = [
   "오늘 당신 웃는 모습, 생각보다 훨씬 멋져요.",
@@ -297,6 +310,20 @@ async function unlockPrayer(password) {
     status.textContent = "일반 회원으로 보고 있어요.";
     say("로그아웃했어요.");
   });
+})();
+// 회원 메뉴: 회원 서버가 연결되어 있으면 로그인 상태를 보여줘요.
+(() => {
+  const auth = window.happyAuth;
+  if (!auth) return;
+  const hello = document.getElementById("memberHello"), login = document.getElementById("navLogin"), join = document.getElementById("navJoin"), logout = document.getElementById("navLogout");
+  const render = (session) => {
+    const on = !!session;
+    hello.hidden = !on; logout.hidden = !on; login.hidden = on; join.hidden = on;
+    if (on) hello.textContent = ((session.user.user_metadata && session.user.user_metadata.nickname) || "회원") + "님 반가워요";
+  };
+  auth.auth.getSession().then(({ data }) => render(data.session));
+  auth.auth.onAuthStateChange((_event, session) => render(session));
+  logout.addEventListener("click", () => auth.auth.signOut());
 })();</script>
 </body>
 </html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>회원가입 · 행복을 주는 남자</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 가운데 한 장짜리 카드. 가입/로그인 탭 → 입력 → 결과 안내 */
+:root {
+  --bg: #f3f7fb;
+  --surface: #ffffff;
+  --fg: #1f2a37;
+  --muted: #5b6b7d;
+  --sun: #ffc93c;
+  --sky: #3d8bfd;
+  --line: #dbe5ef;
+  --danger: #c62828;
+  --ok: #2e7d32;
+  --font-display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111a24; --surface: #19242f; --fg: #eef3f8; --muted: #a3b2c2;
+    --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; --danger: #ff8a80; --ok: #81c784; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111a24; --surface: #19242f; --fg: #eef3f8; --muted: #a3b2c2;
+  --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; --danger: #ff8a80; --ok: #81c784; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  word-break: keep-all; overflow-wrap: break-word;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 1.02rem; line-height: 1.7;
+  padding-inline: 16px; padding-block: 32px 48px;
+}
+.wrap { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+a { color: var(--sky); }
+.back { font-size: .9rem; text-decoration: none; }
+.back:hover { text-decoration: underline; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 2rem; margin: 0; line-height: 1.25; }
+.lead { margin: 0; color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg); border-radius: 12px; padding: 4px; gap: 4px; }
+.tabs button { font: inherit; font-family: var(--font-display); font-size: 1.05rem; border: 0; border-radius: 9px; padding: 8px; background: transparent; color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
+.tabs button:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-weight: 700; font-size: .95rem; }
+.field input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg); width: 100%; }
+.field input:focus-visible { outline: 3px solid var(--sky); outline-offset: 1px; border-color: transparent; }
+.field input[aria-invalid="true"] { border-color: var(--danger); }
+.hint { font-size: .82rem; color: var(--muted); }
+.error { font-size: .82rem; color: var(--danger); min-height: 0; }
+.agree { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; }
+.agree input { margin-top: .35em; width: 18px; height: 18px; accent-color: var(--sky); flex: none; }
+details { font-size: .85rem; color: var(--muted); background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+details summary { cursor: pointer; color: var(--fg); }
+details ul { margin: 8px 0 0; padding-left: 1.2em; }
+.submit { font: inherit; font-family: var(--font-display); font-size: 1.15rem; border: 0; border-radius: 99px; padding: 12px; background: var(--sky); color: #fff; cursor: pointer; transition: transform .15s ease, opacity .15s ease; }
+.submit:hover:not([disabled]) { transform: translateY(-2px); }
+.submit:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+.submit[disabled] { opacity: .5; cursor: not-allowed; }
+.notice { border-radius: 12px; padding: 12px 14px; font-size: .9rem; background: var(--bg); border: 1px dashed var(--line); }
+.notice strong { display: block; margin-bottom: 2px; }
+.notice.warn { border-color: var(--sun); }
+.notice.ok { border: 1px solid var(--ok); color: var(--fg); }
+.notice.err { border: 1px solid var(--danger); }
+.done { text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.done .big { font-family: var(--font-display); font-size: 1.4rem; }
+.done .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.link-btn { font: inherit; font-size: .95rem; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 99px; padding: 8px 18px; cursor: pointer; text-decoration: none; }
+.link-btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .submit { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="./">← 행복을 주는 남자로 돌아가기</a>
+  <div>
+    <h1 id="pageTitle">회원가입</h1>
+    <p class="lead" id="pageLead">가입하면 새 소식과 행복 충전 메시지를 받아볼 수 있어요.</p>
+  </div>
+
+  <div class="notice warn" id="notConnected" hidden>
+    <strong>아직 회원 서버가 연결되지 않았어요</strong>
+    지금은 화면만 볼 수 있고, 연결되면 바로 가입과 로그인을 할 수 있어요.
+  </div>
+
+  <div class="card">
+    <div class="tabs" role="tablist" aria-label="회원가입 또는 로그인">
+      <button type="button" role="tab" id="tabSignup" aria-selected="true" aria-controls="signupForm">회원가입</button>
+      <button type="button" role="tab" id="tabLogin" aria-selected="false" aria-controls="loginForm">로그인</button>
+    </div>
+
+    <form id="signupForm" role="tabpanel" aria-labelledby="tabSignup" novalidate>
+      <div class="field">
+        <label for="suName">닉네임</label>
+        <input id="suName" name="nickname" autocomplete="nickname" maxlength="12" required>
+        <span class="hint">2~12자로 정해 주세요.</span>
+        <span class="error" id="suNameErr"></span>
+      </div>
+      <div class="field">
+        <label for="suEmail">이메일</label>
+        <input id="suEmail" name="email" type="email" autocomplete="email" inputmode="email" required>
+        <span class="error" id="suEmailErr"></span>
+      </div>
+      <div class="field">
+        <label for="suPw">비밀번호</label>
+        <input id="suPw" name="password" type="password" autocomplete="new-password" required>
+        <span class="hint">8자 이상, 영문과 숫자를 섞어 주세요.</span>
+        <span class="error" id="suPwErr"></span>
+      </div>
+      <div class="field">
+        <label for="suPw2">비밀번호 확인</label>
+        <input id="suPw2" name="password2" type="password" autocomplete="new-password" required>
+        <span class="error" id="suPw2Err"></span>
+      </div>
+      <label class="agree"><input type="checkbox" id="suAgree" required><span>개인정보 수집·이용에 동의해요 (필수)</span></label>
+      <details>
+        <summary>무엇을 수집하나요?</summary>
+        <ul>
+          <li>수집 항목: 이메일, 닉네임</li>
+          <li>목적: 회원 확인과 로그인</li>
+          <li>보관 기간: 탈퇴할 때까지</li>
+        </ul>
+      </details>
+      <span class="error" id="suAgreeErr"></span>
+      <button type="submit" class="submit" id="suSubmit">가입하기</button>
+      <div class="notice err" id="suFormErr" role="alert" hidden></div>
+    </form>
+
+    <form id="loginForm" role="tabpanel" aria-labelledby="tabLogin" novalidate hidden>
+      <div class="field">
+        <label for="liEmail">이메일</label>
+        <input id="liEmail" name="email" type="email" autocomplete="email" inputmode="email" required>
+      </div>
+      <div class="field">
+        <label for="liPw">비밀번호</label>
+        <input id="liPw" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="submit" id="liSubmit">로그인</button>
+      <div class="notice err" id="liFormErr" role="alert" hidden></div>
+    </form>
+
+    <div class="done" id="doneSignup" hidden>
+      <p class="big">확인 메일을 보냈어요</p>
+      <p><b id="doneEmail"></b> 로 보낸 메일의 링크를 누르면 가입이 끝나요. 메일이 안 보이면 스팸함도 확인해 주세요.</p>
+      <div class="actions"><button type="button" class="link-btn" id="goLogin">로그인하러 가기</button><a class="link-btn" href="./">홈으로</a></div>
+    </div>
+
+    <div class="done" id="signedIn" hidden>
+      <p class="big" id="signedInName">로그인했어요</p>
+      <p id="signedInEmail"></p>
+      <div class="actions"><a class="link-btn" href="./">홈으로</a><button type="button" class="link-btn" id="signOut">로그아웃</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+const auth = window.happyAuth;
+const $ = (id) => document.getElementById(id);
+const panels = { signup: $("signupForm"), login: $("loginForm") };
+
+function showOnly(el) {
+  [panels.signup, panels.login, $("doneSignup"), $("signedIn")].forEach((p) => { p.hidden = p !== el; });
+  document.querySelector(".tabs").hidden = el === $("doneSignup") || el === $("signedIn");
+}
+function setMode(mode) {
+  const isLogin = mode === "login";
+  $("tabSignup").setAttribute("aria-selected", String(!isLogin));
+  $("tabLogin").setAttribute("aria-selected", String(isLogin));
+  $("pageTitle").textContent = isLogin ? "로그인" : "회원가입";
+  $("pageLead").textContent = isLogin ? "가입한 이메일과 비밀번호로 로그인해요." : "가입하면 새 소식과 행복 충전 메시지를 받아볼 수 있어요.";
+  document.title = (isLogin ? "로그인" : "회원가입") + " · 행복을 주는 남자";
+  showOnly(isLogin ? panels.login : panels.signup);
+}
+$("tabSignup").addEventListener("click", () => { history.replaceState(null, "", "#signup"); setMode("signup"); });
+$("tabLogin").addEventListener("click", () => { history.replaceState(null, "", "#login"); setMode("login"); });
+$("goLogin").addEventListener("click", () => { $("liEmail").value = $("doneEmail").textContent; setMode("login"); $("liPw").focus(); });
+setMode(location.hash === "#login" ? "login" : "signup");
+
+function fieldError(id, message) {
+  $(id + "Err").textContent = message || "";
+  const input = $(id);
+  if (input && input.tagName === "INPUT" && input.type !== "checkbox") input.setAttribute("aria-invalid", message ? "true" : "false");
+  return !message;
+}
+function validateSignup() {
+  const name = $("suName").value.trim(), email = $("suEmail").value.trim(), pw = $("suPw").value, pw2 = $("suPw2").value;
+  const ok = [
+    fieldError("suName", name.length < 2 ? "닉네임을 2자 이상 입력해 주세요." : ""),
+    fieldError("suEmail", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "" : "이메일 주소를 확인해 주세요. 예: name@example.com"),
+    fieldError("suPw", pw.length < 8 ? "비밀번호는 8자 이상이어야 해요." : !(/[A-Za-z]/.test(pw) && /\d/.test(pw)) ? "영문과 숫자를 함께 넣어 주세요." : ""),
+    fieldError("suPw2", pw2 && pw2 === pw ? "" : "비밀번호가 서로 달라요."),
+    fieldError("suAgree", $("suAgree").checked ? "" : "개인정보 수집·이용에 동의해야 가입할 수 있어요.")
+  ];
+  return ok.every(Boolean) ? { name, email, pw } : null;
+}
+["suName", "suEmail", "suPw", "suPw2"].forEach((id) => $(id).addEventListener("blur", () => { if ($(id).value) validateSignup(); }));
+
+function friendly(error) {
+  const m = (error && error.message || "").toLowerCase();
+  if (m.includes("already registered")) return "이미 가입한 이메일이에요. 로그인해 주세요.";
+  if (m.includes("invalid login credentials")) return "이메일 또는 비밀번호가 맞지 않아요.";
+  if (m.includes("email not confirmed")) return "메일 인증을 먼저 끝내 주세요. 가입할 때 받은 메일의 링크를 눌러 주세요.";
+  if (m.includes("rate limit") || m.includes("too many")) return "요청이 너무 많아요. 잠시 후 다시 시도해 주세요.";
+  if (m.includes("password")) return "비밀번호 조건을 확인해 주세요.";
+  if (m.includes("fetch") || m.includes("network")) return "회원 서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.";
+  return "처리하지 못했어요. 잠시 후 다시 시도해 주세요.";
+}
+function formError(id, message) { $(id).textContent = message || ""; $(id).hidden = !message; }
+function busy(button, on, label) { button.disabled = on; button.textContent = label; }
+
+$("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  formError("suFormErr", "");
+  const v = validateSignup();
+  if (!v) { document.querySelector('#signupForm [aria-invalid="true"], #suAgree:not(:checked)')?.focus(); return; }
+  if (!auth) return formError("suFormErr", "아직 회원 서버가 연결되지 않아 가입할 수 없어요.");
+  busy($("suSubmit"), true, "가입하는 중…");
+  const redirect = new URL("./", location.href).href;
+  const { data, error } = await auth.auth.signUp({ email: v.email, password: v.pw, options: { data: { nickname: v.name }, emailRedirectTo: redirect } });
+  busy($("suSubmit"), false, "가입하기");
+  if (error) return formError("suFormErr", friendly(error));
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) return formError("suFormErr", "이미 가입한 이메일이에요. 로그인해 주세요.");
+  if (data.session) return renderSignedIn(data.session.user);
+  $("doneEmail").textContent = v.email;
+  $("signupForm").reset();
+  showOnly($("doneSignup"));
+});
+
+$("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  formError("liFormErr", "");
+  const email = $("liEmail").value.trim(), pw = $("liPw").value;
+  if (!email || !pw) return formError("liFormErr", "이메일과 비밀번호를 모두 입력해 주세요.");
+  if (!auth) return formError("liFormErr", "아직 회원 서버가 연결되지 않아 로그인할 수 없어요.");
+  busy($("liSubmit"), true, "로그인하는 중…");
+  const { data, error } = await auth.auth.signInWithPassword({ email, password: pw });
+  busy($("liSubmit"), false, "로그인");
+  $("liPw").value = "";
+  if (error) return formError("liFormErr", friendly(error));
+  renderSignedIn(data.user);
+});
+
+function renderSignedIn(user) {
+  const nick = user.user_metadata && user.user_metadata.nickname;
+  $("pageTitle").textContent = "환영해요";
+  $("pageLead").textContent = "행복을 주는 남자의 회원이 되었어요.";
+  $("signedInName").textContent = (nick || "회원") + "님, 로그인했어요";
+  $("signedInEmail").textContent = user.email;
+  showOnly($("signedIn"));
+}
+$("signOut").addEventListener("click", async () => { if (auth) await auth.auth.signOut(); setMode("login"); });
+
+if (!auth) {
+  $("notConnected").hidden = false;
+} else {
+  auth.auth.getSession().then(({ data }) => { if (data.session) renderSignedIn(data.session.user); });
+}
+</script>
+</body>
+</html>
