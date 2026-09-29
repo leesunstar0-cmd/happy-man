@@ -19,20 +19,22 @@
   --sky: #3d8bfd;
   --line: #dbe5ef;
   --ink: #2a2107;
+  --danger: #c62828;
   --font-display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #111a24; --surface: #19242f; --fg: #eef3f8; --muted: #a3b2c2;
-    --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; color-scheme: dark;
+    --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; --danger: #ff8a80; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #111a24; --surface: #19242f; --fg: #eef3f8; --muted: #a3b2c2;
-  --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; color-scheme: dark;
+  --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; --danger: #ff8a80; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   word-break: keep-all; overflow-wrap: break-word;
@@ -61,8 +63,16 @@ section { display: flex; flex-direction: column; gap: 16px; }
 @keyframes bob { 50% { transform: translateY(-6px); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* About */
-.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+/* Prayer */
+.prayer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.prayer figure { margin: 0; border-radius: 200px 200px 20px 20px; overflow: hidden; border: 6px solid var(--sun); aspect-ratio: 4 / 5; max-width: 100%; }
+.prayer figure img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+.prayer .text { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.prayer blockquote { margin: 0; padding: 16px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; font-size: 1.1rem; }
+.prayer blockquote p { margin: 0; }
+.prayer blockquote span { display: block; margin-top: 6px; font-size: .88rem; color: var(--muted); }
+
+/* About */.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
 .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; text-align: center; }
 .stat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; color: var(--sky); font-variant-numeric: tabular-nums; }
 .stat span { font-size: .85rem; color: var(--muted); }
@@ -87,8 +97,20 @@ button:active { transform: scale(.97); }
 button:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
 .charge button { font-size: 1.15rem; background: var(--ink); color: #ffe9a8; padding: 12px 28px; }
 
-/* Contact */
-.contact .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+/* Admin */
+.admin { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding-top: 16px; border-top: 1px dashed var(--line); }
+.admin-status { font-size: .85rem; color: var(--muted); }
+.admin-toggle { background: transparent; color: var(--muted); font-family: var(--font-body); font-size: .85rem; text-decoration: underline; padding: 4px 8px; }
+.admin form { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.admin label { font-size: .9rem; }
+.admin input { font: inherit; font-size: .95rem; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--fg); width: 14rem; max-width: 100%; }
+.admin input:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.admin form button, .admin .logout { background: var(--sky); color: #fff; padding: 8px 18px; font-size: .95rem; }
+.admin form button[disabled] { opacity: .6; cursor: wait; }
+.admin-msg { font-size: .85rem; color: var(--muted); min-height: 1.4em; }
+.admin-msg.err { color: var(--danger); }
+
+/* Contact */.contact .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .contact code { font-family: var(--font-body); background: var(--surface); border: 1px solid var(--line); padding: 6px 12px; border-radius: 8px; user-select: all; }
 .contact button { font-size: .95rem; padding: 8px 18px; background: var(--sky); color: #fff; }
 footer { text-align: center; color: var(--muted); font-size: .85rem; }
@@ -96,6 +118,7 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
 @media (max-width: 480px) {
   .stats { grid-template-columns: 1fr; }
   .recipe li { grid-template-columns: 1fr; gap: 2px; }
+  .prayer { grid-template-columns: 1fr; gap: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .sun, .sun::before { animation: none; } button, .meter i { transition: none; } }
 </style>
@@ -117,8 +140,19 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
     <p>작은 농담 하나, 따뜻한 커피 한 잔으로 하루를 조금 더 밝게 만드는 사람입니다.</p>
   </header>
 
-  <section class="about">
-    <span class="label">About</span>
+  <section class="prayer" id="prayer" hidden>
+    <figure>
+      <img id="prayerImg" alt="">
+    </figure>
+    <div class="text">
+      <span class="label">Admin only</span>
+      <h2 id="prayerTitle"></h2>
+      <p id="prayerBody"></p>
+      <blockquote><p id="prayerQuote"></p><span id="prayerCite"></span></blockquote>
+    </div>
+  </section>
+
+  <section class="about">    <span class="label">About</span>
     <h2>이런 사람이에요</h2>
     <p>사람들의 이야기를 끝까지 들어주는 걸 좋아하고, 좋은 일이 생기면 제 일처럼 기뻐합니다. 힘든 날엔 말없이 옆에 앉아 있어 주고, 기분 좋은 날엔 누구보다 크게 웃습니다. 목표는 단 하나, 오늘 만난 사람이 조금 더 웃으며 집에 돌아가는 것.</p>
     <div class="stats">
@@ -158,6 +192,18 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; }
     </div>
   </section>
 
+  <section class="admin" aria-label="관리자">
+    <p class="admin-status" id="adminStatus">일반 회원으로 보고 있어요.</p>
+    <button type="button" class="admin-toggle" id="adminToggle" aria-expanded="false" aria-controls="adminForm">관리자 로그인</button>
+    <form id="adminForm" hidden>
+      <label for="adminPw">관리자 비밀번호</label>
+      <input type="password" id="adminPw" autocomplete="current-password" required>
+      <button type="submit" id="adminSubmit">로그인</button>
+    </form>
+    <button type="button" class="logout" id="adminLogout" hidden>로그아웃</button>
+    <p class="admin-msg" id="adminMsg" aria-live="polite"></p>
+  </section>
+
   <footer>오늘도 좋은 하루 보내세요 :)</footer>
 </div>
 
@@ -189,6 +235,68 @@ document.getElementById("copyBtn").addEventListener("click", (e) => {
   const fallback = () => { const r = document.createRange(); r.selectNodeContents(email); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Ctrl+C로 복사하세요"; };
   try { navigator.clipboard.writeText(email.textContent).then(done, fallback); } catch { fallback(); }
 });
-</script>
+// 관리자 전용: 사진과 글은 관리자 비밀번호로 암호화된 파일에만 들어 있어요.
+const ADMIN_FILE = "서윤/prayer.enc.json";
+const fromB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+async function unlockPrayer(password) {
+  if (!window.crypto || !crypto.subtle) throw new Error("insecure");
+  let res;
+  try { res = await fetch(encodeURI(ADMIN_FILE), { cache: "no-store" }); } catch { throw new Error("offline"); }
+  if (!res.ok) throw new Error("missing");
+  const box = await res.json();
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: fromB64(box.salt), iterations: box.iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  let plain;
+  try { plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromB64(box.iv) }, key, fromB64(box.data)); } catch { throw new Error("wrong"); }
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+(() => {
+  const toggle = document.getElementById("adminToggle"), form = document.getElementById("adminForm"), pw = document.getElementById("adminPw");
+  const submit = document.getElementById("adminSubmit"), logout = document.getElementById("adminLogout");
+  const status = document.getElementById("adminStatus"), msg = document.getElementById("adminMsg");
+  const prayer = document.getElementById("prayer"), img = document.getElementById("prayerImg");
+  let blobUrl = null;
+  const say = (text, isError) => { msg.textContent = text; msg.classList.toggle("err", !!isError); };
+  toggle.addEventListener("click", () => {
+    form.hidden = !form.hidden;
+    toggle.setAttribute("aria-expanded", String(!form.hidden));
+    if (!form.hidden) pw.focus();
+  });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    submit.disabled = true; say("확인하는 중이에요…");
+    try {
+      const data = await unlockPrayer(pw.value);
+      blobUrl = URL.createObjectURL(new Blob([fromB64(data.image)], { type: data.mime }));
+      img.src = blobUrl; img.alt = data.alt;
+      document.getElementById("prayerTitle").textContent = data.heading;
+      document.getElementById("prayerBody").textContent = data.body;
+      document.getElementById("prayerQuote").textContent = data.quote;
+      document.getElementById("prayerCite").textContent = data.cite;
+      prayer.hidden = false;
+      form.hidden = true; toggle.hidden = true; logout.hidden = false;
+      toggle.setAttribute("aria-expanded", "false");
+      status.textContent = "관리자로 보고 있어요. 관리자 전용 사진이 첫 화면 아래에 나와요.";
+      say("");
+      prayer.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (err) {
+      const reason = err.message;
+      say(reason === "wrong" ? "비밀번호가 맞지 않아요. 다시 입력해 주세요."
+        : reason === "missing" ? "관리자 전용 사진 파일이 아직 올라와 있지 않아요."
+        : reason === "insecure" ? "이 주소에서는 잠금을 풀 수 없어요. https 주소로 열어 주세요."
+        : "사진 파일을 불러오지 못했어요. 파일을 더블클릭해 열었다면 웹 주소로 열어 주세요.", true);
+    } finally {
+      pw.value = ""; submit.disabled = false;
+    }
+  });
+  logout.addEventListener("click", () => {
+    prayer.hidden = true;
+    img.removeAttribute("src"); img.alt = "";
+    if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+    logout.hidden = true; toggle.hidden = false;
+    status.textContent = "일반 회원으로 보고 있어요.";
+    say("로그아웃했어요.");
+  });
+})();</script>
 </body>
 </html>
