@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>행복을 주는 남자</title>
+<meta name="description" content="곁에 있으면 행복해지는 남자를 소개하는 한 페이지 사이트">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: 한 줄기 세로 흐름. 웃는 해님 → 소개 → 행복 레시피 → 행복 충전소 → 연락처 */
+:root {
+  --bg: #f3f7fb;
+  --surface: #ffffff;
+  --fg: #1f2a37;
+  --muted: #5b6b7d;
+  --sun: #ffc93c;
+  --sky: #3d8bfd;
+  --line: #dbe5ef;
+  --ink: #2a2107;
+  --font-display: "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111a24; --surface: #19242f; --fg: #eef3f8; --muted: #a3b2c2;
+    --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111a24; --surface: #19242f; --fg: #eef3f8; --muted: #a3b2c2;
+  --sun: #ffd35c; --sky: #7fb2ff; --line: #2a3846; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  word-break: keep-all; overflow-wrap: break-word;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 1.05rem; line-height: 1.75;
+  padding-inline: 16px; padding-block: 0 48px;
+}
+.wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.25; }
+h2 { font-size: 1.75rem; }
+p { margin: 0; }
+.label { font-size: .8rem; letter-spacing: .12em; color: var(--sky); text-transform: uppercase; font-weight: 700; }
+section { display: flex; flex-direction: column; gap: 16px; }
+
+/* Hero */
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding-top: 56px; }
+.sun { width: 150px; height: 150px; border-radius: 50%; background: var(--sun); display: grid; place-items: center; position: relative; animation: bob 4s ease-in-out infinite; }
+.sun::before { content: ""; position: absolute; inset: -18px; border-radius: 50%;
+  background: repeating-conic-gradient(var(--sun) 0 6deg, transparent 6deg 30deg);
+  -webkit-mask: radial-gradient(circle, transparent 88px, #000 89px); mask: radial-gradient(circle, transparent 88px, #000 89px);
+  animation: spin 24s linear infinite; }
+.face { width: 84px; height: 84px; position: relative; }
+.hero h1 { font-size: clamp(2.2rem, 7vw, 3.4rem); }
+.hero h1 em { font-style: normal; color: var(--sky); }
+.hero p { color: var(--muted); max-width: 32ch; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* About */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; text-align: center; }
+.stat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; color: var(--sky); font-variant-numeric: tabular-nums; }
+.stat span { font-size: .85rem; color: var(--muted); }
+
+/* Recipe */
+.recipe ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.recipe li { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px dashed var(--line); }
+.recipe li:last-child { border-bottom: 0; }
+.amt { font-family: var(--font-display); color: var(--sky); font-size: 1.05rem; }
+.recipe li strong { display: block; font-weight: 700; }
+.recipe li small { color: var(--muted); font-size: .92rem; }
+
+/* Charge */
+.charge { background: var(--sun); color: var(--ink); border-radius: 24px; padding: 32px 24px; align-items: center; gap: 18px; text-align: center; }
+.msg { font-size: 1.2rem; min-height: 3.6em; display: grid; place-items: center; max-width: 30ch; }
+.meter { width: 100%; max-width: 360px; height: 14px; background: rgba(42, 33, 7, .15); border-radius: 99px; overflow: hidden; }
+.meter i { display: block; height: 100%; width: 20%; background: var(--ink); border-radius: 99px; transition: width .5s ease; }
+.meter-text { font-size: .9rem; font-variant-numeric: tabular-nums; }
+button { font: inherit; font-family: var(--font-display); border: 0; border-radius: 99px; cursor: pointer; transition: transform .15s ease; }
+button:hover { transform: translateY(-2px); }
+button:active { transform: scale(.97); }
+button:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+.charge button { font-size: 1.15rem; background: var(--ink); color: #ffe9a8; padding: 12px 28px; }
+
+/* Contact */
+.contact .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.contact code { font-family: var(--font-body); background: var(--surface); border: 1px solid var(--line); padding: 6px 12px; border-radius: 8px; user-select: all; }
+.contact button { font-size: .95rem; padding: 8px 18px; background: var(--sky); color: #fff; }
+footer { text-align: center; color: var(--muted); font-size: .85rem; }
+
+@media (max-width: 480px) {
+  .stats { grid-template-columns: 1fr; }
+  .recipe li { grid-template-columns: 1fr; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { .sun, .sun::before { animation: none; } button, .meter i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="sun" aria-hidden="true">
+      <svg class="face" viewBox="0 0 84 84" fill="none">
+        <circle cx="28" cy="34" r="5" fill="#2a2107"/>
+        <circle cx="56" cy="34" r="5" fill="#2a2107"/>
+        <path d="M24 50 Q42 68 60 50" stroke="#2a2107" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <circle cx="18" cy="48" r="5" fill="#ff9f7a" opacity=".7"/>
+        <circle cx="66" cy="48" r="5" fill="#ff9f7a" opacity=".7"/>
+      </svg>
+    </div>
+    <span class="label">Hello, nice to meet you</span>
+    <h1>곁에 있으면 <em>행복해지는</em> 남자</h1>
+    <p>작은 농담 하나, 따뜻한 커피 한 잔으로 하루를 조금 더 밝게 만드는 사람입니다.</p>
+  </header>
+
+  <section class="about">
+    <span class="label">About</span>
+    <h2>이런 사람이에요</h2>
+    <p>사람들의 이야기를 끝까지 들어주는 걸 좋아하고, 좋은 일이 생기면 제 일처럼 기뻐합니다. 힘든 날엔 말없이 옆에 앉아 있어 주고, 기분 좋은 날엔 누구보다 크게 웃습니다. 목표는 단 하나, 오늘 만난 사람이 조금 더 웃으며 집에 돌아가는 것.</p>
+    <div class="stats">
+      <div class="stat"><b>37회</b><span>하루 평균 미소</span></div>
+      <div class="stat"><b>100%</b><span>칭찬 적중률</span></div>
+      <div class="stat"><b>0.3초</b><span>리액션 속도</span></div>
+    </div>
+  </section>
+
+  <section class="recipe">
+    <span class="label">Recipe</span>
+    <h2>행복 레시피 (1인분)</h2>
+    <ul>
+      <li><span class="amt">미소 2큰술</span><div><strong>먼저 웃어주기</strong><small>인사는 늘 제가 먼저, 눈이 반달이 될 때까지.</small></div></li>
+      <li><span class="amt">경청 1컵</span><div><strong>끝까지 들어주기</strong><small>휴대폰은 내려놓고, 고개는 끄덕끄덕.</small></div></li>
+      <li><span class="amt">농담 한 꼬집</span><div><strong>분위기 풀어주기</strong><small>아재개그지만 타율은 꽤 높습니다.</small></div></li>
+      <li><span class="amt">커피 한 잔</span><div><strong>따뜻함 건네기</strong><small>취향 기억해뒀다가 말없이 건네기.</small></div></li>
+      <li><span class="amt">응원 넉넉히</span><div><strong>믿어주기</strong><small>"너라면 할 수 있어"는 아낌없이.</small></div></li>
+    </ul>
+  </section>
+
+  <section class="charge" aria-live="polite">
+    <h2>행복 충전소</h2>
+    <p class="msg" id="msg">버튼을 눌러 오늘의 행복을 받아가세요.</p>
+    <div class="meter" aria-hidden="true"><i id="bar"></i></div>
+    <span class="meter-text" id="meterText">행복 게이지 20%</span>
+    <button type="button" id="chargeBtn">행복 충전하기</button>
+  </section>
+
+  <section class="contact">
+    <span class="label">Contact</span>
+    <h2>행복이 필요할 땐 연락주세요</h2>
+    <p>우울한 날, 자랑하고 싶은 날, 그냥 심심한 날 모두 환영입니다.</p>
+    <div class="row">
+      <code id="email">happy.guy@example.com</code>
+      <button type="button" id="copyBtn">주소 복사</button>
+    </div>
+  </section>
+
+  <footer>오늘도 좋은 하루 보내세요 :)</footer>
+</div>
+
+<script>
+const messages = [
+  "오늘 당신 웃는 모습, 생각보다 훨씬 멋져요.",
+  "지금까지 잘 해왔어요. 앞으로도 잘 할 거예요.",
+  "잠깐 쉬어가도 괜찮아요. 커피 한 잔 어때요?",
+  "당신 덕분에 누군가는 오늘 행복했을 거예요.",
+  "걱정은 반으로, 기쁨은 두 배로 나눠요.",
+  "오늘의 행운: 좋아하는 노래가 우연히 흘러나옵니다.",
+  "당신은 생각보다 훨씬 많은 사람에게 소중해요.",
+  "힘든 하루였다면, 오늘 밤은 푹 자기로 해요."
+];
+let level = 20, last = -1;
+const msg = document.getElementById("msg"), bar = document.getElementById("bar"), meterText = document.getElementById("meterText"), btn = document.getElementById("chargeBtn");
+btn.addEventListener("click", () => {
+  let i; do { i = Math.floor(Math.random() * messages.length); } while (i === last); last = i;
+  msg.textContent = messages[i];
+  level = level >= 100 ? 20 : Math.min(100, level + 20);
+  bar.style.width = level + "%";
+  meterText.textContent = level === 100 ? "행복 게이지 100% 완충!" : "행복 게이지 " + level + "%";
+  btn.textContent = level === 100 ? "처음부터 다시 충전" : "한 번 더 충전하기";
+});
+
+document.getElementById("copyBtn").addEventListener("click", (e) => {
+  const b = e.currentTarget, email = document.getElementById("email");
+  const done = () => { b.textContent = "복사됨"; setTimeout(() => { b.textContent = "주소 복사"; }, 1500); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(email); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Ctrl+C로 복사하세요"; };
+  try { navigator.clipboard.writeText(email.textContent).then(done, fallback); } catch { fallback(); }
+});
+</script>
+</body>
+</html>
