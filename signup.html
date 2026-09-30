@@ -79,6 +79,19 @@ details ul { margin: 8px 0 0; padding-left: 1.2em; }
 .done .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .link-btn { font: inherit; font-size: .95rem; border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 99px; padding: 8px 18px; cursor: pointer; text-decoration: none; }
 .link-btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.social { display: flex; flex-direction: column; gap: 10px; }
+.social-title { margin: 0; font-weight: 700; font-size: .95rem; text-align: center; }
+.sns { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; font: inherit; font-weight: 700; font-size: .98rem; border-radius: 12px; padding: 11px 14px; cursor: pointer; border: 1px solid transparent; transition: transform .15s ease, filter .15s ease; }
+.sns svg { width: 20px; height: 20px; flex: none; }
+.sns:hover { transform: translateY(-1px); filter: brightness(.97); }
+.sns:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.sns[disabled] { opacity: .6; cursor: wait; transform: none; }
+.sns.naver { background: #03c75a; color: #fff; }
+.sns.kakao { background: #fee500; color: rgba(0, 0, 0, .85); }
+.sns.google { background: #fff; color: #1f1f1f; border-color: #dadce0; }
+.social-note { margin: 0; font-size: .8rem; color: var(--muted); text-align: center; }
+.divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .85rem; margin-top: 4px; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 @media (prefers-reduced-motion: reduce) { .submit { transition: none; } }
 </style>
 </head>
@@ -99,6 +112,25 @@ details ul { margin: 8px 0 0; padding-left: 1.2em; }
     <div class="tabs" role="tablist" aria-label="회원가입 또는 로그인">
       <button type="button" role="tab" id="tabSignup" aria-selected="true" aria-controls="signupForm">회원가입</button>
       <button type="button" role="tab" id="tabLogin" aria-selected="false" aria-controls="loginForm">로그인</button>
+    </div>
+
+    <div class="social" id="social">
+      <p class="social-title" id="socialTitle">간편하게 시작하기</p>
+      <button type="button" class="sns naver" data-provider="naver">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#fff" d="M13.6 10.7 6.2 0H0v20h6.4V9.3L13.8 20H20V0h-6.4z" transform="scale(.7) translate(4.3 4.3)"/></svg>
+        <span>네이버로 시작하기</span>
+      </button>
+      <button type="button" class="sns kakao" data-provider="kakao">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#191600" d="M10 2.5C5.3 2.5 1.5 5.5 1.5 9.2c0 2.4 1.6 4.5 4 5.7l-1 3.6c-.1.3.3.6.6.4l4.2-2.8H10c4.7 0 8.5-3 8.5-6.7S14.7 2.5 10 2.5z"/></svg>
+        <span>카카오로 시작하기</span>
+      </button>
+      <button type="button" class="sns google" data-provider="google">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path fill="#4285F4" d="M19.6 10.2c0-.7-.1-1.4-.2-2H10v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M10 20c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H1.1v2.6A10 10 0 0 0 10 20z"/><path fill="#FBBC05" d="M4.4 12c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V5.4H1.1a10 10 0 0 0 0 9.2L4.4 12z"/><path fill="#EA4335" d="M10 4c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 1.1 5.4L4.4 8C5.2 5.7 7.4 4 10 4z"/></svg>
+        <span>Google로 시작하기</span>
+      </button>
+      <p class="social-note">간편 가입도 이메일과 닉네임을 회원 확인 용도로만 받고, 탈퇴할 때까지 보관해요.</p>
+      <div class="notice err" id="socialErr" role="alert" hidden></div>
+      <div class="divider"><span>또는 이메일로</span></div>
     </div>
 
     <form id="signupForm" role="tabpanel" aria-labelledby="tabSignup" novalidate>
@@ -174,7 +206,9 @@ const panels = { signup: $("signupForm"), login: $("loginForm") };
 
 function showOnly(el) {
   [panels.signup, panels.login, $("doneSignup"), $("signedIn")].forEach((p) => { p.hidden = p !== el; });
-  document.querySelector(".tabs").hidden = el === $("doneSignup") || el === $("signedIn");
+  const finished = el === $("doneSignup") || el === $("signedIn");
+  document.querySelector(".tabs").hidden = finished;
+  $("social").hidden = finished;
 }
 function setMode(mode) {
   const isLogin = mode === "login";
@@ -183,12 +217,27 @@ function setMode(mode) {
   $("pageTitle").textContent = isLogin ? "로그인" : "회원가입";
   $("pageLead").textContent = isLogin ? "가입한 이메일과 비밀번호로 로그인해요." : "가입하면 새 소식과 행복 충전 메시지를 받아볼 수 있어요.";
   document.title = (isLogin ? "로그인" : "회원가입") + " · 행복을 주는 남자";
+  $("socialTitle").textContent = isLogin ? "간편 로그인" : "간편하게 시작하기";
   showOnly(isLogin ? panels.login : panels.signup);
 }
 $("tabSignup").addEventListener("click", () => { history.replaceState(null, "", "#signup"); setMode("signup"); });
 $("tabLogin").addEventListener("click", () => { history.replaceState(null, "", "#login"); setMode("login"); });
 $("goLogin").addEventListener("click", () => { $("liEmail").value = $("doneEmail").textContent; setMode("login"); $("liPw").focus(); });
 setMode(location.hash === "#login" ? "login" : "signup");
+
+// 간편 가입에서 돌아왔는데 실패했다면 이유를 알려줘요.
+(() => {
+  const code = new URLSearchParams(location.search).get("error");
+  if (!code) return;
+  const messages = {
+    naver_cancelled: "네이버 로그인을 취소했어요.",
+    naver_email: "네이버에서 이메일을 받지 못했어요. 네이버 로그인 때 이메일 제공에 동의해 주세요.",
+    naver_state: "로그인 요청이 만료됐어요. 다시 시도해 주세요.",
+    access_denied: "로그인을 취소했어요."
+  };
+  formError("socialErr", messages[code] || "간편 로그인을 끝내지 못했어요. 잠시 후 다시 시도해 주세요.");
+  history.replaceState(null, "", location.pathname + location.hash);
+})();
 
 function fieldError(id, message) {
   $(id + "Err").textContent = message || "";
@@ -265,6 +314,25 @@ async function renderSignedIn(user) {
   const isAdmin = data && data.role === "admin";
   $("signedInEmail").textContent = user.email + " · " + (isAdmin ? "관리자" : "일반 회원");
 }
+// 간편 가입/로그인: Google·카카오는 Supabase 기본 로그인, 네이버는 naver-auth 서버 함수가 처리해요.
+// 처음 로그인하면 자동으로 가입되고, 등급은 일반 회원으로 시작해요.
+document.querySelectorAll(".sns").forEach((b) => b.addEventListener("click", async () => {
+  formError("socialErr", "");
+  if (!auth) return formError("socialErr", "아직 회원 서버가 연결되지 않아 간편 가입을 할 수 없어요.");
+  const home = new URL("./", location.href).href;
+  const provider = b.dataset.provider;
+  b.disabled = true;
+  if (provider === "naver") {
+    location.href = window.HAPPY_CONFIG.supabaseUrl.replace(/\/$/, "") + "/functions/v1/naver-auth?redirect_to=" + encodeURIComponent(home);
+    return;
+  }
+  const { error } = await auth.auth.signInWithOAuth({ provider, options: { redirectTo: home } });
+  if (error) {
+    b.disabled = false;
+    formError("socialErr", (provider === "kakao" ? "카카오" : "Google") + " 로그인을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.");
+  }
+}));
+
 $("signOut").addEventListener("click", async () => { if (auth) await auth.auth.signOut(); setMode("login"); });
 
 if (!auth) {

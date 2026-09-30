@@ -1,7 +1,7 @@
 -- 행복을 주는 남자: 회원 등급(일반 회원 / 관리자) 설정
 -- Supabase 대시보드 → SQL Editor 에 전체를 붙여 넣고 Run 을 눌러요. 여러 번 실행해도 괜찮아요.
 
--- 1) 회원 프로필 표: 가입하면 자동으로 '일반 회원(member)' 으로 만들어져요.
+-- 1) 회원 프로필 표: 이메일·네이버·카카오·Google 어느 방법으로 가입해도 자동으로 '일반 회원(member)' 으로 만들어져요.
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   email text,
@@ -26,7 +26,7 @@ language plpgsql security definer set search_path = public
 as $$
 begin
   insert into public.profiles (id, email, nickname)
-  values (new.id, new.email, coalesce(nullif(new.raw_user_meta_data ->> 'nickname', ''), split_part(new.email, '@', 1)))
+  values (new.id, new.email, coalesce(nullif(new.raw_user_meta_data ->> 'nickname', ''), nullif(new.raw_user_meta_data ->> 'name', ''), nullif(new.raw_user_meta_data ->> 'full_name', ''), split_part(new.email, '@', 1), '회원'))
   on conflict (id) do nothing;
   return new;
 end;
@@ -47,7 +47,7 @@ create policy "admins update profiles" on public.profiles for update using (publ
 
 -- 이미 가입한 회원이 있다면 프로필을 채워 넣어요.
 insert into public.profiles (id, email, nickname)
-select u.id, u.email, coalesce(nullif(u.raw_user_meta_data ->> 'nickname', ''), split_part(u.email, '@', 1))
+select u.id, u.email, coalesce(nullif(u.raw_user_meta_data ->> 'nickname', ''), nullif(u.raw_user_meta_data ->> 'name', ''), nullif(u.raw_user_meta_data ->> 'full_name', ''), split_part(u.email, '@', 1), '회원')
 from auth.users u
 on conflict (id) do nothing;
 
