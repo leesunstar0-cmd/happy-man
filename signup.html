@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>회원가입 · 행복을 주는 남자</title>
+<title>회원가입 · 행복을 주는 남자들</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap">
@@ -97,7 +97,7 @@ details ul { margin: 8px 0 0; padding-left: 1.2em; }
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="./">← 행복을 주는 남자로 돌아가기</a>
+  <a class="back" href="./">← 행복을 주는 남자들로 돌아가기</a>
   <div>
     <h1 id="pageTitle">회원가입</h1>
     <p class="lead" id="pageLead">가입하면 새 소식과 행복 충전 메시지를 받아볼 수 있어요.</p>
@@ -216,7 +216,7 @@ function setMode(mode) {
   $("tabLogin").setAttribute("aria-selected", String(isLogin));
   $("pageTitle").textContent = isLogin ? "로그인" : "회원가입";
   $("pageLead").textContent = isLogin ? "가입한 이메일과 비밀번호로 로그인해요." : "가입하면 새 소식과 행복 충전 메시지를 받아볼 수 있어요.";
-  document.title = (isLogin ? "로그인" : "회원가입") + " · 행복을 주는 남자";
+  document.title = (isLogin ? "로그인" : "회원가입") + " · 행복을 주는 남자들";
   $("socialTitle").textContent = isLogin ? "간편 로그인" : "간편하게 시작하기";
   showOnly(isLogin ? panels.login : panels.signup);
 }
@@ -306,7 +306,7 @@ $("loginForm").addEventListener("submit", async (e) => {
 async function renderSignedIn(user) {
   const nick = user.user_metadata && user.user_metadata.nickname;
   $("pageTitle").textContent = "환영해요";
-  $("pageLead").textContent = "행복을 주는 남자의 회원이 되었어요.";
+  $("pageLead").textContent = "행복을 주는 남자들의 회원이 되었어요.";
   $("signedInName").textContent = (nick || "회원") + "님, 로그인했어요";
   $("signedInEmail").textContent = user.email;
   showOnly($("signedIn"));
