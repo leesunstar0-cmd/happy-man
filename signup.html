@@ -97,7 +97,7 @@ details ul { margin: 8px 0 0; padding-left: 1.2em; }
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="./">← 행복을 주는 남자들로 돌아가기</a>
+  <a class="back" href="./" id="backLink">← 행복을 주는 남자들로 돌아가기</a>
   <div>
     <h1 id="pageTitle">회원가입</h1>
     <p class="lead" id="pageLead">가입하면 새 소식과 행복 충전 메시지를 받아볼 수 있어요.</p>
@@ -186,13 +186,13 @@ details ul { margin: 8px 0 0; padding-left: 1.2em; }
     <div class="done" id="doneSignup" hidden>
       <p class="big">확인 메일을 보냈어요</p>
       <p><b id="doneEmail"></b> 로 보낸 메일의 링크를 누르면 가입이 끝나요. 메일이 안 보이면 스팸함도 확인해 주세요.</p>
-      <div class="actions"><button type="button" class="link-btn" id="goLogin">로그인하러 가기</button><a class="link-btn" href="./">홈으로</a></div>
+      <div class="actions"><button type="button" class="link-btn" id="goLogin">로그인하러 가기</button><a class="link-btn home-link" href="./">홈으로</a></div>
     </div>
 
     <div class="done" id="signedIn" hidden>
       <p class="big" id="signedInName">로그인했어요</p>
       <p id="signedInEmail"></p>
-      <div class="actions"><a class="link-btn" href="./">홈으로</a><button type="button" class="link-btn" id="signOut">로그아웃</button></div>
+      <div class="actions"><a class="link-btn home-link" href="./">홈으로</a><button type="button" class="link-btn" id="signOut">로그아웃</button></div>
     </div>
   </div>
 </div>
@@ -201,6 +201,18 @@ details ul { margin: 8px 0 0; padding-left: 1.2em; }
 <script src="config.js"></script>
 <script>
 const auth = window.happyAuth;
+// 다른 사이트(예: 행복을 주는 사람, JS)에서 왔으면 ?next= 로 받은 곳으로 돌려보내요. 같은 주소(도메인) 안으로만 보내요.
+const NEXT = (() => {
+  const n = new URLSearchParams(location.search).get("next");
+  if (!n) return null;
+  try { const u = new URL(n, location.origin); return u.origin === location.origin ? u.href : null; } catch { return null; }
+})();
+const RETURN_TO = NEXT || new URL("./", location.href).href;
+if (NEXT) {
+  document.getElementById("backLink").href = NEXT;
+  document.getElementById("backLink").textContent = "← 원래 보던 페이지로 돌아가기";
+  document.querySelectorAll(".home-link").forEach((a) => { a.href = NEXT; a.textContent = "원래 페이지로"; });
+}
 const $ = (id) => document.getElementById(id);
 const panels = { signup: $("signupForm"), login: $("loginForm") };
 
@@ -236,7 +248,9 @@ setMode(location.hash === "#login" ? "login" : "signup");
     access_denied: "로그인을 취소했어요."
   };
   formError("socialErr", messages[code] || "간편 로그인을 끝내지 못했어요. 잠시 후 다시 시도해 주세요.");
-  history.replaceState(null, "", location.pathname + location.hash);
+  const params = new URLSearchParams(location.search);
+  params.delete("error");
+  history.replaceState(null, "", location.pathname + (params.toString() ? "?" + params : "") + location.hash);
 })();
 
 function fieldError(id, message) {
@@ -278,7 +292,7 @@ $("signupForm").addEventListener("submit", async (e) => {
   if (!v) { document.querySelector('#signupForm [aria-invalid="true"], #suAgree:not(:checked)')?.focus(); return; }
   if (!auth) return formError("suFormErr", "아직 회원 서버가 연결되지 않아 가입할 수 없어요.");
   busy($("suSubmit"), true, "가입하는 중…");
-  const redirect = new URL("./", location.href).href;
+  const redirect = RETURN_TO;
   const { data, error } = await auth.auth.signUp({ email: v.email, password: v.pw, options: { data: { nickname: v.name }, emailRedirectTo: redirect } });
   busy($("suSubmit"), false, "가입하기");
   if (error) return formError("suFormErr", friendly(error));
@@ -300,6 +314,7 @@ $("loginForm").addEventListener("submit", async (e) => {
   busy($("liSubmit"), false, "로그인");
   $("liPw").value = "";
   if (error) return formError("liFormErr", friendly(error));
+  if (NEXT) { location.href = NEXT; return; }
   renderSignedIn(data.user);
 });
 
@@ -319,7 +334,7 @@ async function renderSignedIn(user) {
 document.querySelectorAll(".sns").forEach((b) => b.addEventListener("click", async () => {
   formError("socialErr", "");
   if (!auth) return formError("socialErr", "아직 회원 서버가 연결되지 않아 간편 가입을 할 수 없어요.");
-  const home = new URL("./", location.href).href;
+  const home = RETURN_TO;
   const provider = b.dataset.provider;
   b.disabled = true;
   if (provider === "naver") {

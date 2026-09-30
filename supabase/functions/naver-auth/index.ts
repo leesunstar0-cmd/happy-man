@@ -25,8 +25,12 @@ async function sign(data: string): Promise<string> {
 const b64url = (s: string) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const unb64url = (s: string) => decodeURIComponent(escape(atob(s.replace(/-/g, "+").replace(/_/g, "/"))));
 
-// 사이트 주소로만 돌려보내요. 다른 곳으로 보내는 요청은 사이트 첫 화면으로 바꿔요.
-const safeRedirect = (r: string | null) => (r && r.startsWith(SITE_URL) ? r : SITE_URL);
+// 같은 주소(도메인)의 페이지로만 돌려보내요. 두 사이트(happy-man, JS 페이지)가 회원 정보를 함께 써요.
+// 다른 곳으로 보내는 요청은 사이트 첫 화면으로 바꿔요.
+const SITE_ORIGIN = new URL(SITE_URL).origin;
+const safeRedirect = (r: string | null) => {
+  try { return r && new URL(r).origin === SITE_ORIGIN ? r : SITE_URL; } catch { return SITE_URL; }
+};
 const backWithError = (code: string) => Response.redirect(SITE_URL + "signup.html?error=" + code + "#login", 302);
 
 Deno.serve(async (req) => {
